@@ -1,0 +1,3 @@
+function Initialize(){
+    alert("hey");
+}
