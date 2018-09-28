@@ -17,8 +17,20 @@ function Initialize(){
             alert(error);
         }
 
-    })
+    });
 }
 function GetLeagueScores(leagueId){
-    alert(leagueId);
+        $.ajax({
+        url: 'https://api-cardillsports-st.herokuapp.com/stat/score' + leagueId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data){
+            $("#scores").html(data);
+            $("#scores").show();
+        },
+        error: function(xhr, status, error) {
+            alert(error);
+        }
+
+    });
 }
