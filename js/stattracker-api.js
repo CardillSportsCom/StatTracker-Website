@@ -25,7 +25,16 @@ function GetLeagueScores(leagueId){
         type: 'GET',
         dataType: 'json',
         success: function(data){
-            $("#scores").html(data);
+            var HTMLString = "";
+            for(var i = 0; i< data.gameDays.length;i++){
+                HTMLString += "<h1>" + data.gameDays[i].gameDate + "</h1>";
+                    var count = 1;                
+                for(var j = 0; j< data.gameDays[i].games.length; j++){
+                    HTMLString += "<button class='btn-u'>Game " + count + ": " + data.gameDays[i].games[j].teamAScore + "-" + data.gameDays[i].games[j].teamBScore  +"</button>";
+                    count ++;
+                }
+            }
+            $("#scores").html(HTMLString);
             $("#scores").show();
         },
         error: function(xhr, status, error) {
