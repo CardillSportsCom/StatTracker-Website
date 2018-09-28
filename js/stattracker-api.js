@@ -11,8 +11,8 @@ function Initialize(){
             $("#leagueTable").find('tbody').html(HTMLString);
 
         },
-        error: function(data){
-            alert("couldn't get leagues");
+        error: function(xhr, status, error) {
+            
         }
 
     })
