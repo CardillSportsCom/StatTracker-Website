@@ -21,7 +21,7 @@ function Initialize(){
 }
 function GetLeagueScores(leagueId){
         $.ajax({
-        url: 'https://api-cardillsports-st.herokuapp.com/stat/score' + leagueId,
+        url: 'https://api-cardillsports-st.herokuapp.com/stat/score/' + leagueId,
         type: 'GET',
         dataType: 'json',
         success: function(data){
