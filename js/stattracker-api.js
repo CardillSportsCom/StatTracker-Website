@@ -1,6 +1,6 @@
 function Initialize(){
     $.ajax({
-        url: 'http://api-cardillsports-st.herokuapp.com/league',
+        url: 'https://api-cardillsports-st.herokuapp.com/league',
         type: 'GET',
         dataType: 'json',
         success: function(data){
