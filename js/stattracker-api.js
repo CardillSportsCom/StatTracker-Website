@@ -2,6 +2,7 @@ function Initialize(){
     $.ajax({
         url: 'http://api-cardillsports-st.herokuapp.com/league',
         type: 'GET',
+        dataType: 'json',
         success: function(data){
             var HTMLString = "";
             for(var i = 0; i< data.leagues.length; i ++){
