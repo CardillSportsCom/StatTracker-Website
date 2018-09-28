@@ -6,13 +6,13 @@ function Initialize(){
         success: function(data){
             var HTMLString = "";
             for(var i = 0; i< data.leagues.length; i ++){
-                HTMLString += "<tr><td>" + data.leagues[i].name +"</td></tr>";
+                HTMLString += "<tr><td>" + data.leagues[i].name +" <input type='hidden' class='leagueId' value='" + data.leagues[i]._id +"'/></td></tr>";
             }
             $("#leagueTable").find('tbody').html(HTMLString);
 
         },
         error: function(xhr, status, error) {
-            
+            alert(error);
         }
 
     })
