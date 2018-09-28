@@ -10,7 +10,7 @@ function Initialize(){
             }
             $("#leagueTable").find('tbody').html(HTMLString);
             $(".leagueName").on("click", function(){
-                GetLeagueScores($(this).sibling('.leagueId').val());
+                GetLeagueScores($(this).siblings('.leagueId').val());
             });
         },
         error: function(xhr, status, error) {
