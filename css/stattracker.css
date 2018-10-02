@@ -2,3 +2,16 @@
     cursor: pointer;
     
 }
+
+.gameDate{
+        border-radius: 15px;
+    background: #ffcc30;
+    border: black;
+    border-style: solid;
+    border-width: 2px;
+    padding: 25px;
+    margin-bottom:10px;
+}
+.boxScoreButton{
+    margin-left:5px;
+}
