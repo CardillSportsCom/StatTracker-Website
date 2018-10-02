@@ -29,7 +29,7 @@ function GetLeagueStats(leagueId){
         success: function(data){
             var HTMLString = "";
             HTMLString += "<h2>Total Stats</h2>"
-            HTMLString +="<table class='table-striped table-bordered table-hover playerTotalStats' style='background:white'>";
+            HTMLString +="<table class='table-striped table-bordered table-hover playerTotalStats' data-search style='background:white'>";
             HTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>"
               
             for(var i =0; i< data.leagueStats.length; i++){
@@ -43,7 +43,7 @@ function GetLeagueStats(leagueId){
             }
             HTMLString += "</tbody></table>"            
             $("#stats").html(HTMLString);
-            $("#stats").find(".playerTotalStats").bootstrapTable();
+            $("#stats").find(".playerTotalStats").bootstrapTable({search: true});
         },
         error: function(xhr, status, error) {
             alert(error);
@@ -102,7 +102,7 @@ function GetLeagueScores(leagueId){
                 var GameDate = $(".selectGameDate").val();
                 $(".gameDate").hide();
                 $("#" + GameDate).show();
-                $("#"+GameDate).find(".gameDateTotalStats").bootstrapTable();
+                $("#"+GameDate).find(".gameDateTotalStats").bootstrapTable({search: true});
             });
             $("#statsTab").on("click", function(){
                 $("#scores").hide();
