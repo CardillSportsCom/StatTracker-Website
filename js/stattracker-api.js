@@ -11,6 +11,7 @@ function Initialize(){
             $("#leagueTable").find('tbody').html(HTMLString);
             $(".leagueName").on("click", function(){
                 GetLeagueScores($(this).siblings('.leagueId').val());
+                GetLeagueStats($(this).siblings('.leagueId').val());
             });
         },
         error: function(xhr, status, error) {
@@ -19,6 +20,38 @@ function Initialize(){
 
     });
 }
+
+function GetLeagueStats(leagueId){
+        $.ajax({
+        url: 'https://api-cardillsports-st.herokuapp.com/stat/league/' + leagueId,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data){
+            var HTMLString = "";
+            HTMLString += "<h2>Total Stats</h2>"
+            HTMLString +="<table class='table-striped table-bordered table-hover playerTotalStats' style='background:white'>";
+            HTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>"
+              
+            for(var i =0; i< data.leagueStats.length; i++){
+                var player = data.leagueStats[i];
+                var fg = (100*player.playerTotalStats.FGM/player.playerTotalStats.FGA).toFixed(0);
+                if(player.playerTotalStats.FGA == 0){
+                    fg = 0;
+                }
+                HTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ fg + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
+                
+            }
+            HTMLString += "</tbody></table>"            
+            $("#stats").html(HTMLString);
+            $("#stats").find(".playerTotalStats").bootstrapTable();
+        },
+        error: function(xhr, status, error) {
+            alert(error);
+        }
+
+    });
+}
+
 function GetLeagueScores(leagueId){
         $.ajax({
         url: 'https://api-cardillsports-st.herokuapp.com/stat/score/' + leagueId,
@@ -37,7 +70,11 @@ function GetLeagueScores(leagueId){
                 HTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>"
                 for(var m = 0; m<data.gameDays[i].gameDayStatTotals.length; m++){
                     var player = data.gameDays[i].gameDayStatTotals[m];
-                    HTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ (100*player.playerTotalStats.FGM/player.playerTotalStats.FGA).toFixed(0) + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
+                    var fg = (100*player.playerTotalStats.FGM/player.playerTotalStats.FGA).toFixed(0);
+                    if(player.playerTotalStats.FGA == 0){
+                        fg = 0;
+                    }
+                    HTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ fg + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
                 }
                 HTMLString += "</tbody></table>"
 
@@ -52,7 +89,11 @@ function GetLeagueScores(leagueId){
             }
             HTMLString = HTMLString.replace("{0}", GameDateDropdownString);
             $("#scores").html(HTMLString);
+            $(".leagueStats").show();
             $("#scores").show();
+            $("#stats").hide();
+            $("#scoresTab").addClass('active');
+            $("#statsTab").removeClass('active');
             $(".boxScoreButton").on('click', function(){
                 GetBoxScore(this);
 
@@ -62,6 +103,20 @@ function GetLeagueScores(leagueId){
                 $(".gameDate").hide();
                 $("#" + GameDate).show();
                 $("#"+GameDate).find(".gameDateTotalStats").bootstrapTable();
+            });
+            $("#statsTab").on("click", function(){
+                $("#scores").hide();
+                $("#stats").show();
+                $("#statsTab").addClass('active');
+                $("#scoresTab").removeClass('active');
+                
+                
+            });
+            $("#scoresTab").on("click", function(){
+                $("#stats").hide();
+                $("#scores").show();
+                $("#scoresTab").addClass('active');
+                $("#statsTab").removeClass('active');
             });
         },
         error: function(xhr, status, error) {
@@ -84,7 +139,11 @@ function GetBoxScore(boxScoreButton){
                 HTMLString +="<thead><tr><th data-sortable='true'>"+ data.gameStats[i].teamName +" Player</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>"
                 for(var m = 0; m<data.gameStats[i].playerStats.length; m++){
                     var player = data.gameStats[i].playerStats[m];
-                    HTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.FGM +  "</td>" +"<td>" +player.FGM + "/" +player.FGA +" ("+ (100*player.FGM/player.FGA).toFixed(0) + "%)" +  "</td>" +"<td>" + player.assists +  "</td>" +"<td>" + player.rebounds +  "</td>" +"<td>" + player.steals +  "</td>" +"<td>" + player.blocks +  "</td>" +"<td>" + player.turnovers +  "</td>" +"</tr>";
+                    var fg=(100*player.FGM/player.FGA).toFixed(0);
+                    if(player.FGA == 0){
+                        fg = 0;
+                    }
+                    HTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.FGM +  "</td>" +"<td>" + fg  + "% ("+player.FGM + "/" +player.FGA+ ")" +  "</td>" +"<td>" + player.assists +  "</td>" +"<td>" + player.rebounds +  "</td>" +"<td>" + player.steals +  "</td>" +"<td>" + player.blocks +  "</td>" +"<td>" + player.turnovers +  "</td>" +"</tr>";
                 }
                 HTMLString += "</table>";
 

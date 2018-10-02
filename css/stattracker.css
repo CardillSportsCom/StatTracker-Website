@@ -3,7 +3,11 @@
     
 }
 
-.gameDate{
+.boxScoreButton{
+    margin-left:5px;
+}
+
+.bg-cardill{
         border-radius: 15px;
     background: #ffcc30;
     border: black;
@@ -11,7 +15,4 @@
     border-width: 2px;
     padding: 25px;
     margin-bottom:10px;
-}
-.boxScoreButton{
-    margin-left:5px;
 }
