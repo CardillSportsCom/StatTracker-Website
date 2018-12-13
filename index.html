@@ -6,6 +6,8 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css">
 <link rel="stylesheet" href="./css/stattracker.css">
+<link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.css" />
+
 </head>
 <body>
 <nav class="navbar navbar-inverse">
@@ -14,26 +16,15 @@
     </div>
 </nav>
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div id="leagues">
-                <table class="table-striped" id="leagueTable" data-toggle="table">
-                    <thead>
-                        <tr>
-                            <th>League/Pickup Name</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-
-                    </tbody>
-                </table>
+    <div id="login">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h2>Welcome to Cardill Sports StatTracker</h2>
+                <div id="firebaseui-auth-container"></div>
+                <div id="loader">Loading...</div>
             </div>
         </div>
-    </div> 
-    <ul class="nav nav-tabs leagueStats" style="display:none;margin-top:10px;">
-        <li class="active" id="scoresTab"><a href="#">Scores</a></li>
-        <li     id="statsTab"><a href="#">Stats</a></li>
-    </ul>
+    </div>
     <div id="scores" style="display:none;" class="container-fluid bg-cardill">
 
     </div>
@@ -43,9 +34,32 @@
 
 </div>
 
+<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+<script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyAAUgiXi7aKEgdxFG1JzxAC6z5lQU0GoN4",
+    authDomain: "stat-tracker-1537117819639.firebaseapp.com",
+    databaseURL: "https://stat-tracker-1537117819639.firebaseio.com",
+    projectId: "stat-tracker-1537117819639",
+    storageBucket: "stat-tracker-1537117819639.appspot.com",
+    messagingSenderId: "41770019498"
+  };
+  firebase.initializeApp(config);
+</script>
+<script src="https://cdn.firebase.com/libs/firebaseui/3.1.1/firebaseui.js"></script>
+
+<!-- Firebase App is always required and must be first -->
+<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase-app.js"></script>
+    <!-- Add additional services that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-messaging.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-functions.js"></script>
 <script src="https://code.jquery.com/jquery-1.12.4.min.js"  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="  crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <script src="./js/stattracker-api.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){

@@ -1,18 +1,92 @@
 function Initialize(){
+    // Initialize the default app
+    var config = {
+        apiKey: "AIzaSyAAUgiXi7aKEgdxFG1JzxAC6z5lQU0GoN4",
+        authDomain: "stat-tracker-1537117819639.firebaseapp.com",
+        databaseURL: "https://stat-tracker-1537117819639.firebaseio.com",
+        projectId: "stat-tracker-1537117819639",
+        storageBucket: "stat-tracker-1537117819639.appspot.com",
+        messagingSenderId: "41770019498"
+      };
+      firebase.initializeApp(config);
+      var ui = new firebaseui.auth.AuthUI(firebase.auth())
+ui.start('#firebaseui-auth-container', {
+    signInOptions: [
+      // List of OAuth providers supported.
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+      firebase.auth.GithubAuthProvider.PROVIDER_ID
+    ],
+    // Other config options...
+  });
+  var uiConfig = {
+    callbacks: {
+      signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+        // User successfully signed in.
+        // Return type determines whether we continue the redirect automatically
+        // or whether we leave that to developer to handle.
+        Login(authResult.user._lat);
+        return false;
+      },
+      uiShown: function() {
+        // The widget is rendered.
+        // Hide the loader.
+        document.getElementById('loader').style.display = 'none';
+      }
+    },
+    // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+    signInFlow: 'popup',
+    signInSuccessUrl: '<url-to-redirect-to-on-success>',
+    signInOptions: [
+      // Leave the lines as is for the providers you want to offer your users.
+      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+      firebase.auth.EmailAuthProvider.PROVIDER_ID,
+
+    ],
+    // Terms of service url.
+    tosUrl: '<your-tos-url>',
+    // Privacy policy url.
+    privacyPolicyUrl: '<your-privacy-policy-url>'
+  };
+  ui.start('#firebaseui-auth-container', uiConfig);
+
+    // $.ajax({
+    //     url: 'https://api-cardillsports-st.herokuapp.com/league',
+    //     type: 'GET',
+    //     dataType: 'json',
+    //     success: function(data){
+    //         var HTMLString = "";
+    //         for(var i = 0; i< data.leagues.length; i ++){
+    //             HTMLString += "<tr><td><span class='leagueName'>" + data.leagues[i].name +"</span><input type='hidden' class='leagueId' value='" + data.leagues[i]._id +"'/></td></tr>";
+    //         }
+    //         $("#leagueTable").find('tbody').html(HTMLString);
+    //         $(".leagueName").on("click", function(){
+    //             GetLeagueScores($(this).siblings('.leagueId').val());
+    //             GetLeagueStats($(this).siblings('.leagueId').val());
+    //         });
+    //     },
+    //     error: function(xhr, status, error) {
+    //         alert(error);
+    //     }
+
+    // });
+}
+function Login(firebase_token){
+    var sendData = {
+        token: firebase_token
+    }
     $.ajax({
-        url: 'https://api-cardillsports-st.herokuapp.com/league',
-        type: 'GET',
+        url: 'https://api-cardillsports-st.herokuapp.com/auth',
+        type: 'POST',
+        data: sendData,
         dataType: 'json',
         success: function(data){
-            var HTMLString = "";
-            for(var i = 0; i< data.leagues.length; i ++){
-                HTMLString += "<tr><td><span class='leagueName'>" + data.leagues[i].name +"</span><input type='hidden' class='leagueId' value='" + data.leagues[i]._id +"'/></td></tr>";
-            }
-            $("#leagueTable").find('tbody').html(HTMLString);
-            $(".leagueName").on("click", function(){
-                GetLeagueScores($(this).siblings('.leagueId').val());
-                GetLeagueStats($(this).siblings('.leagueId').val());
-            });
+            Cookies.set('token', data.id_token, {expires: 1});
+            Cookies.set('playerId', data.player._id, {expires: 1});
+            GetPlayerData();
+
         },
         error: function(xhr, status, error) {
             alert(error);
@@ -20,11 +94,31 @@ function Initialize(){
 
     });
 }
+function GetPlayerData(){
+    var token = Cookies.get('token');
+    $.ajax({
+        url: 'https://api-cardillsports-st.herokuapp.com/player/leagues/' + Cookies.get('playerId'),
+        type: 'GET',
+        dataType: 'json',
+        beforeSend: function (xhr) {   //Include the bearer token in header
+            xhr.setRequestHeader("Authorization", token);
+        },
+        success: function(data){
+            alert(data[0].league.name);
 
+        },
+        error: function(xhr, status, error) {
+            alert(error);
+        }
+    });
+}
 function GetLeagueStats(leagueId){
         $.ajax({
         url: 'https://api-cardillsports-st.herokuapp.com/stat/league/' + leagueId,
         type: 'GET',
+        beforeSend: function (xhr) {   //Include the bearer token in header
+            xhr.setRequestHeader("Authorization", token);
+        },
         dataType: 'json',
         success: function(data){
             var HTMLString = "";
