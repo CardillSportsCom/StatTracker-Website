@@ -104,15 +104,18 @@ function GetPlayerData(){
             xhr.setRequestHeader("Authorization", token);
         },
         success: function(data){
-            alert(data[0].league.name);
-
+            Cookies.set('leagueId', data.leagues[0].league._id, {expires: 1});
+            GetLeagueStats();
+            GetLeagueScores();
         },
         error: function(xhr, status, error) {
             alert(error);
         }
     });
 }
-function GetLeagueStats(leagueId){
+function GetLeagueStats(){
+    var token = Cookies.get('token');
+    var leagueId = Cookies.get('leagueId');
         $.ajax({
         url: 'https://api-cardillsports-st.herokuapp.com/stat/league/' + leagueId,
         type: 'GET',
@@ -146,19 +149,24 @@ function GetLeagueStats(leagueId){
     });
 }
 
-function GetLeagueScores(leagueId){
+function GetLeagueScores(){
+    var token = Cookies.get('token');
+    var leagueId = Cookies.get('leagueId');
         $.ajax({
         url: 'https://api-cardillsports-st.herokuapp.com/stat/score/' + leagueId,
         type: 'GET',
+        beforeSend: function (xhr) {   //Include the bearer token in header
+            xhr.setRequestHeader("Authorization", token);
+        },
         dataType: 'json',
         success: function(data){
             var HTMLString = "";
             var GameDateDropdownString = "";
             HTMLString += "<div class='row' style='margin-top:10px; margin-bottom:10px'><div class=col-md-12'><label for='selectGameDate'>Pick a Game Date: </label><select class='selectGameDate' style='margin-left:10px;'><option disabled selected>-- Select Ball Run Date -- </option>{0}</select></div></div>";
             for(var i = 0; i< data.gameDays.length;i++){
-                HTMLString += "<div class='row gameDate' id='"+ data.gameDays[i].gameDate +"' style='display:none'><div class='col-md-12'>";
-                GameDateDropdownString += "<option value="+ data.gameDays[i].gameDate + ">" + data.gameDays[i].gameDate + "</option>";
-                HTMLString +="<h3>Player Total Stats for: " + data.gameDays[i].gameDate + "</h3>"
+                HTMLString += "<div class='row gameDate' id='"+ data.gameDays[i].gameDate.replace(/\//g,'') +"' style='display:none'><div class='col-md-12'>";
+                GameDateDropdownString += "<option value="+ data.gameDays[i].gameDate.replace(/\//g,'')  + ">" + data.gameDays[i].gameDate.replace(/\//g,'')  + "</option>";
+                HTMLString +="<h3>Player Total Stats for: " + data.gameDays[i].gameDate.replace(/\//g,'')  + "</h3>"
                 var count = 1;
                 HTMLString +="<table class='table-striped table-bordered table-hover gameDateTotalStats' style='background:white'>";
                 HTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>"
@@ -221,10 +229,15 @@ function GetLeagueScores(leagueId){
 }
 
 function GetBoxScore(boxScoreButton){
+    var token = Cookies.get('token');
+
     var gameId = $(boxScoreButton).siblings('.selectGameDay').val();
         $.ajax({
         url: 'https://api-cardillsports-st.herokuapp.com/stat/game/' + gameId,
         type: 'GET',
+        beforeSend: function (xhr) {   //Include the bearer token in header
+            xhr.setRequestHeader("Authorization", token);
+        },
         dataType: 'json',
         success: function(data){
             var HTMLString = "";
