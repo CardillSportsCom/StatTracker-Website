@@ -122,14 +122,14 @@ function GetLeagueStats(){
                 var player = data.leagueStats[i];
                 var totalStatFg = (100 * player.playerTotalStats.FGM/player.playerTotalStats.FGA).toFixed(0);
                 var averageStatFg = (100  *player.playerAverageStats.FGM/player.playerAverageStats.FGA).toFixed(0);
-                var winPercentage = (100 * player.PlayerTotalStats.gamesWon/player.playerTotalStats.gamesPlayed).toFixed(0);
+                var winPercentage = (100 * player.playerTotalStats.gamesWon/player.playerTotalStats.gamesPlayed).toFixed(0);
                 if(player.playerTotalStats.FGA == 0){
                     totalStatFg = 0;
                 }
                 if(player.playerAverageStats.FGA == 0){
                     averageStatFg = 0;
                 }
-                TotalStatsHTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ totalStatFg + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
+                TotalStatsHTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "(" + winPercentage + "%)</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ totalStatFg + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
 
                 AverageStatsHTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerAverageStats.gamesWon +  "(" + winPercentage + "%)</td>" +"<td>" + player.playerAverageStats.gamesPlayed +  "</td>" +"<td>" + player.playerAverageStats.FGM +  "</td>" +"<td>"+ averageStatFg + "% ("  +player.playerAverageStats.FGM + "/" +player.playerAverageStats.FGA +")" +  "</td>" +"<td>" + player.playerAverageStats.assists +  "</td>" +"<td>" + player.playerAverageStats.rebounds +  "</td>" +"<td>" + player.playerAverageStats.steals +  "</td>" +"<td>" + player.playerAverageStats.blocks +  "</td>" +"<td>" + player.playerAverageStats.turnovers +  "</td>" +"</tr>";
                 
