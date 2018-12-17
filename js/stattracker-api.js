@@ -1,77 +1,60 @@
 function Initialize(){
     // Initialize the default app
-    var config = {
-        apiKey: "AIzaSyAAUgiXi7aKEgdxFG1JzxAC6z5lQU0GoN4",
-        authDomain: "stat-tracker-1537117819639.firebaseapp.com",
-        databaseURL: "https://stat-tracker-1537117819639.firebaseio.com",
-        projectId: "stat-tracker-1537117819639",
-        storageBucket: "stat-tracker-1537117819639.appspot.com",
-        messagingSenderId: "41770019498"
-      };
-      firebase.initializeApp(config);
-      var ui = new firebaseui.auth.AuthUI(firebase.auth())
-ui.start('#firebaseui-auth-container', {
-    signInOptions: [
-      // List of OAuth providers supported.
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-      firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-      firebase.auth.TwitterAuthProvider.PROVIDER_ID,
-      firebase.auth.GithubAuthProvider.PROVIDER_ID
-    ],
-    // Other config options...
-  });
-  var uiConfig = {
-    callbacks: {
-      signInSuccessWithAuthResult: function(authResult, redirectUrl) {
-        // User successfully signed in.
-        // Return type determines whether we continue the redirect automatically
-        // or whether we leave that to developer to handle.
-        Login(authResult.user._lat);
-        return false;
-      },
-      uiShown: function() {
-        // The widget is rendered.
-        // Hide the loader.
-        document.getElementById('loader').style.display = 'none';
-      }
-    },
-    // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
-    signInFlow: 'popup',
-    signInSuccessUrl: '<url-to-redirect-to-on-success>',
-    signInOptions: [
-      // Leave the lines as is for the providers you want to offer your users.
-      firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-    //   firebase.auth.FacebookAuthProvider.PROVIDER_ID,
-    //   firebase.auth.EmailAuthProvider.PROVIDER_ID,
+    if(Cookies.get('token') != null && Cookies.get('token') != ""){
+        GetPlayerData();
+    }
+    else {    
+        var config = {
+            apiKey: "AIzaSyAAUgiXi7aKEgdxFG1JzxAC6z5lQU0GoN4",
+            authDomain: "stat-tracker-1537117819639.firebaseapp.com",
+            databaseURL: "https://stat-tracker-1537117819639.firebaseio.com",
+            projectId: "stat-tracker-1537117819639",
+            storageBucket: "stat-tracker-1537117819639.appspot.com",
+            messagingSenderId: "41770019498"
+        };
+        firebase.initializeApp(config);
+        var ui = new firebaseui.auth.AuthUI(firebase.auth())
+        ui.start('#firebaseui-auth-container', {
+            signInOptions: [
+            // List of OAuth providers supported.
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+            firebase.auth.TwitterAuthProvider.PROVIDER_ID,
+            firebase.auth.GithubAuthProvider.PROVIDER_ID
+            ]
+        });
+        var uiConfig = {
+            callbacks: {
+                signInSuccessWithAuthResult: function(authResult, redirectUrl) {
+                    // User successfully signed in.
+                    // Return type determines whether we continue the redirect automatically
+                    // or whether we leave that to developer to handle.
+                    Login(authResult.user._lat);
+                    return false;
+                },
+                uiShown: function() {
+                    // The widget is rendered.
+                    // Hide the loader.
+                    document.getElementById('loader').style.display = 'none';
+                }
+            },
+            // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+            signInFlow: 'popup',
+            signInSuccessUrl: '<url-to-redirect-to-on-success>',
+            signInOptions: [
+            // Leave the lines as is for the providers you want to offer your users.
+            firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+            //   firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+            //   firebase.auth.EmailAuthProvider.PROVIDER_ID,
 
-    ],
-    // Terms of service url.
-    tosUrl: '<your-tos-url>',
-    // Privacy policy url.
-    privacyPolicyUrl: '<your-privacy-policy-url>'
-  };
-  ui.start('#firebaseui-auth-container', uiConfig);
-
-    // $.ajax({
-    //     url: 'https://api-cardillsports-st.herokuapp.com/league',
-    //     type: 'GET',
-    //     dataType: 'json',
-    //     success: function(data){
-    //         var HTMLString = "";
-    //         for(var i = 0; i< data.leagues.length; i ++){
-    //             HTMLString += "<tr><td><span class='leagueName'>" + data.leagues[i].name +"</span><input type='hidden' class='leagueId' value='" + data.leagues[i]._id +"'/></td></tr>";
-    //         }
-    //         $("#leagueTable").find('tbody').html(HTMLString);
-    //         $(".leagueName").on("click", function(){
-    //             GetLeagueScores($(this).siblings('.leagueId').val());
-    //             GetLeagueStats($(this).siblings('.leagueId').val());
-    //         });
-    //     },
-    //     error: function(xhr, status, error) {
-    //         alert(error);
-    //     }
-
-    // });
+            ],
+            // Terms of service url.
+            tosUrl: '<your-tos-url>',
+            // Privacy policy url.
+            privacyPolicyUrl: '<your-privacy-policy-url>'
+        };
+    ui.start('#firebaseui-auth-container', uiConfig);
+    }
 }
 function Login(firebase_token){
     var sendData = {
@@ -104,6 +87,7 @@ function GetPlayerData(){
             xhr.setRequestHeader("Authorization", token);
         },
         success: function(data){
+            $("#loader").hide();
             Cookies.set('leagueId', data.leagues[0].league._id, {expires: 1});
             GetLeagueStats();
             GetLeagueScores();
@@ -124,23 +108,38 @@ function GetLeagueStats(){
         },
         dataType: 'json',
         success: function(data){
-            var HTMLString = "";
-            HTMLString += "<h2>Total Stats</h2>"
-            HTMLString +="<table class='table-striped table-bordered table-hover playerTotalStats' data-search style='background:white'>";
-            HTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>"
+            var TotalStatsHTMLString = "";
+            TotalStatsHTMLString += "<h2>Total Stats</h2>"
+            TotalStatsHTMLString +="<table class='table-striped table-bordered table-hover playerTotalStats' data-search style='background:white'>";
+            TotalStatsHTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>";
+
+            var AverageStatsHTMLString = "";
+            AverageStatsHTMLString += "<h2>Average Stats Per 10</h2>"
+            AverageStatsHTMLString +="<table class='table-striped table-bordered table-hover playerAverageStats' data-search style='background:white'>";
+            AverageStatsHTMLString +="<thead><tr><th data-sortable='true'>Player</th><th data-sortable='true'>Wins</th><th data-sortable='true'>GP</th><th data-sortable='true'>Points</th><th data-sortable='true'>FG%</th><th data-sortable='true'>Assists</th><th data-sortable='true'>Rebounds</th><th data-sortable='true'>Steals</th><th data-sortable='true'>Blocks</th><th data-sortable='true'>Turnovers</th></tr></thead><tbody>";
               
             for(var i =0; i< data.leagueStats.length; i++){
                 var player = data.leagueStats[i];
-                var fg = (100*player.playerTotalStats.FGM/player.playerTotalStats.FGA).toFixed(0);
+                var totalStatFg = (100 * player.playerTotalStats.FGM/player.playerTotalStats.FGA).toFixed(0);
+                var averageStatFg = (100  *player.playerAverageStats.FGM/player.playerAverageStats.FGA).toFixed(0);
                 if(player.playerTotalStats.FGA == 0){
-                    fg = 0;
+                    totalStatFg = 0;
                 }
-                HTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ fg + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
+                if(player.playerAverageStats.FGA == 0){
+                    averageStatFg = 0;
+                }
+                TotalStatsHTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerTotalStats.gamesWon +  "</td>" +"<td>" + player.playerTotalStats.gamesPlayed +  "</td>" +"<td>" + player.playerTotalStats.FGM +  "</td>" +"<td>"+ totalStatFg + "% ("  +player.playerTotalStats.FGM + "/" +player.playerTotalStats.FGA +")" +  "</td>" +"<td>" + player.playerTotalStats.assists +  "</td>" +"<td>" + player.playerTotalStats.rebounds +  "</td>" +"<td>" + player.playerTotalStats.steals +  "</td>" +"<td>" + player.playerTotalStats.blocks +  "</td>" +"<td>" + player.playerTotalStats.turnovers +  "</td>" +"</tr>";
+
+                AverageStatsHTMLString +="<tr>" + "<td>" + player.player.firstName +  "</td>" +"<td>" + player.playerAverageStats.gamesWon +  "</td>" +"<td>" + player.playerAverageStats.gamesPlayed +  "</td>" +"<td>" + player.playerAverageStats.FGM +  "</td>" +"<td>"+ averageStatFg + "% ("  +player.playerAverageStats.FGM + "/" +player.playerAverageStats.FGA +")" +  "</td>" +"<td>" + player.playerAverageStats.assists +  "</td>" +"<td>" + player.playerAverageStats.rebounds +  "</td>" +"<td>" + player.playerAverageStats.steals +  "</td>" +"<td>" + player.playerAverageStats.blocks +  "</td>" +"<td>" + player.playerAverageStats.turnovers +  "</td>" +"</tr>";
                 
             }
-            HTMLString += "</tbody></table>"            
-            $("#stats").html(HTMLString);
+            TotalStatsHTMLString += "</tbody></table>"            
+            $("#stats").html(TotalStatsHTMLString);
             $("#stats").find(".playerTotalStats").bootstrapTable({search: true});
+
+            AverageStatsHTMLString += "</tbody></table>"            
+            $("#averageStats").html(AverageStatsHTMLString);
+            $("#averageStats").find(".playerAverageStats").bootstrapTable({search: true});
         },
         error: function(xhr, status, error) {
             alert(error);
@@ -194,8 +193,11 @@ function GetLeagueScores(){
             $(".leagueStats").show();
             $("#scores").show();
             $("#stats").hide();
+            $("#averageStats").hide();
             $("#scoresTab").addClass('active');
             $("#statsTab").removeClass('active');
+            $("#averageStatsTab").removeClass('active');
+
             $(".boxScoreButton").on('click', function(){
                 GetBoxScore(this);
 
@@ -207,18 +209,24 @@ function GetLeagueScores(){
                 $("#"+GameDate).find(".gameDateTotalStats").bootstrapTable({search: true});
             });
             $("#statsTab").on("click", function(){
-                $("#scores").hide();
+                $(".stat-containter").hide();
                 $("#stats").show();
+                $(".stat-tab").removeClass('active');
                 $("#statsTab").addClass('active');
-                $("#scoresTab").removeClass('active');
                 
                 
             });
             $("#scoresTab").on("click", function(){
-                $("#stats").hide();
+                $(".stat-containter").hide();
                 $("#scores").show();
+                $(".stat-tab").removeClass('active');
                 $("#scoresTab").addClass('active');
-                $("#statsTab").removeClass('active');
+            });
+            $("#averageStatsTab").on("click", function(){
+                $(".stat-containter").hide();
+                $("#averageStats").show();
+                $(".stat-tab").removeClass('active');
+                $("#averageStatsTab").addClass('active');
             });
         },
         error: function(xhr, status, error) {
